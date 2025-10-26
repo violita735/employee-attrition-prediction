@@ -742,6 +742,47 @@ Dari hasil visualisasi data di atas, dapat ditarik kesimpulan sebagai berikut :
 Secara keseluruhan, *Bagging (Logistic Base)* memberikan keseimbangan optimal antara performa, stabilitas, dan interpretabilitas, sehingga layak dijadikan sebagai model akhir untuk implementasi pada sistem prediksi employee attrition di tahap produksi.
 
 ---
+## Model Implementation
+Model terbaik yang terpilih pada proses pemodelan adalah : 
+Best Model : Bagging (Logistic Regression Base)
+Validation AUC : 0,8345
+AUC Gap (Train - Val) : 0,0020
+Model tersimpan sebagai:
+models/Bagging_Logistic_Base__v1.pkl
+& bundle lengkap:
+models/best_model_bundle_v1.pkl
+Model terbaik yang dipilih adalah Bagging (Logistic Base) dengan validation AUC sebesar 0,8345 dengan gap yang sangat kecil yaitu +0,0020, Artinya bahwa model ini tidak overfitting dan memiliki stabilitas prediksi yang baik dalam memisahkan karyawan yang resign dan tetap bertahan. Hasil ini juga akan lebih baik dibanding model ensemble yang hanya memberikan AUC 0,8325. Model ini menggunakan class_weight, bukan SMOTE, sehingga model tetap belajar pola asli tanpa oversampling sintesis.
+**Karakteristik Performa model : **
+Akurasi Generalisasi tinggi : Validation AUC paling tinggi diantara model lain, yaitu (0,8345) dibandingkan dengan model yang lain.
+Gap antara CV dan Validation AUC hanya sekitar 0,01 yang menunjukkan bahwa model stabil dan tidak overfit
+Bagging dapat mengurangi variance sehingga prediksi churn lebih konsisten
+**Pengaruh Fitur Utama (Based on Logistic Base Behavior)**
+Karena model terbaik adalah Bagging dengan Basic Regression, maka arah interpretasi tetap mengikuti logika dari regresi logistik. 
+Fitur bernilai positif → dapat meningkatkan peluang karyawan resign
+Fitur bernilai negatif →  dapat menurunkan peluang karyawan untuk resign
+Pada data submission terlihat bahwa memiliki data sebagai berikut : 
+Mean : 0.2155, Std : 0.1360
+Min : 0.0362, Max : 0.7110
+
+| No | ID     | Probabilitas risiko keluar|
+|----|--------|-------------------:|
+| 1  | CM617  | 0.3664             |
+| 2  | PJ010  | 0.1021             |
+| 3  | GJ831  | 0.1582             |
+| 4  | JD352  | 0.0593             |
+| 5  | WZ263  | 0.4655             |
+| 6  | OD346  | 0.2737             |
+| 7  | GF698  | 0.1254             |
+| 8  | JK198  | 0.1092             |
+| 9  | SP276  | 0.0682             |
+|10  | OP259  | 0.5508             |
+|11  | CR707  | 0.2169             |
+
+CV : 0.8238, Val : 0.8345, Ensemble : 0.8325
+Berdasarkan hasil prediksi model, rata rata probabilitas risiko resign nya karyawan berada pada level rendah yaitu 0.2155, dengan variasi yang cukup besar (std 0.1360) dan rentang nilai dari 0.0362 hingga 0.7110. Data menunjukkan bahwa beberapa karyawan memiliki risiko cukup tinggi untuk keluar(resign) seperti OP259 sebesar 0.5508 dan WZ263 sebesar 0.4655. Pada model yang stabil dan akurat tercermin dari nilzi CV sebesar 0.8238, validation sebesar 0.8345 dan ensemble 0.8325 yang artinya bahwa model dapat dipakai sebagai dasar untuk ambil kesimpulan.
+
+
+---
 ## Save Best Model
 ```python
 filename = '../model/Bagging_Logistic_Base__v1.pkl'
@@ -759,48 +800,3 @@ Model terbaik yang terpilih dalam proses pemodelan **Employee Attrition Predicti
 Hal ini menunjukkan bahwa model **tidak mengalami *overfitting*** dan memiliki **stabilitas prediksi yang baik** dalam membedakan antara karyawan yang **berpotensi keluar (attrition)** dan **yang bertahan**.
 Hasil ini juga akan lebih baik dibanding model ensemble yang hanya memberikan AUC 0,8325. Model ini menggunakan class_weight, bukan SMOTE, sehingga model tetap belajar pola asli tanpa oversampling sintesis.
 
-## Conclution
-### Ringkasan Proyek
-Dalam proyek ini, telah dikembangkan sebuah model klasifikasi berbasis Bagging (Logistic Regression Base) untuk memprediksi kemungkinan karyawan mengalami attrition (keluar dari perusahaan).
-Tujuan utama proyek ini adalah untuk menghasilkan prediksi yang akurat terhadap risiko attrition, mengidentifikasi faktor-faktor utama yang memengaruhi keputusan karyawan untuk keluar, serta memberikan rekomendasi strategis bagi perusahaan dalam meningkatkan retensi karyawan.
-Dengan adanya model ini, perusahaan dapat menyusun strategi pencegahan yang lebih terarah dan efisien, mengingat bahwa mempertahankan karyawan yang berpengalaman lebih bernilai daripada merekrut karyawan baru.
-
-### Hasil Dan Evaluasi Model
-Permasalahan bisnis yang diangkat telah berhasil diselesaikan dengan baik.
-Setelah melalui proses pelatihan dan validasi berbagai algoritma, model terbaik yang terpilih adalah Bagging (Logistic Regression Base) dengan hasil sebagai berikut:
-
-Validation AUC: 0.8345
-AUC Gap (Train – Validation): 0.0020
-
-Nilai AUC yang relatif tinggi dan selisih (gap) yang sangat kecil menunjukkan bahwa model memiliki kemampuan generalisasi yang baik dan tidak mengalami overfitting.
-Artinya, model ini dapat memisahkan dengan cukup akurat antara karyawan yang berpotensi keluar dan yang tetap bertahan.
-Model ini juga menunjukkan peningkatan kinerja dibandingkan model ensemble lain yang hanya mencapai AUC sebesar 0.8325, menandakan bahwa kombinasi Bagging dengan basis Logistic Regression adalah solusi yang optimal untuk kasus ini.
-
-### Penanganan Ketidakseimbangan Data
-Masalah ketidakseimbangan kelas pada variabel target ditangani menggunakan pendekatan class_weight alih-alih metode oversampling seperti SMOTE.
-Pendekatan ini dipilih agar model tetap belajar dari distribusi data yang alami, sehingga hasil prediksi tetap representatif terhadap kondisi dunia nyata.
-Selain itu, proses pelatihan juga melibatkan Stratified train-test split dan validasi silang (cross-validation) untuk menjaga proporsi kelas dan meningkatkan reliabilitas hasil evaluasi.
-
-### Interpretasi dan Validasi Mode
-Interpretasi model dilakukan menggunakan analisis feature importance dan teknik SHAP (SHapley Additive Explanations) untuk memahami kontribusi setiap fitur terhadap probabilitas attrition.
-Hasil interpretasi menunjukkan bahwa fitur-fitur seperti OverTime, MonthlyIncome, TotalWorkingYears, JobLevel, dan Age merupakan faktor yang paling berpengaruh terhadap risiko attrition.
-Temuan ini sejalan dengan analisis eksploratif sebelumnya, yang mengindikasikan bahwa beban kerja tinggi, gaji rendah, dan masa kerja singkat merupakan pemicu utama karyawan untuk meninggalkan perusahaan.
-Model juga menunjukkan stabilitas hasil probabilitas yang konsisten dan masuk akal, memperkuat keyakinan terhadap reliabilitas prediksi yang dihasilkan.
-
-### Estimasi Nilai Finansial
-Berdasarkan estimasi awal, model ini memiliki potensi memberikan *dampak finansial positif* yang signifikan.  
-Jika diasumsikan biaya kehilangan satu karyawan setara dengan *1.5 kali gaji tahunan*, maka penerapan strategi retensi  
-berbasis model ini dapat membantu perusahaan menghemat biaya hingga *puluhan ribu dolar per tahun* tergantung pada jumlah turnover aktual.  
-
-Dengan demikian, hasil ini tidak hanya memberikan insight analitis, tetapi juga dasar kuat untuk justifikasi ekonomi  
-dalam pengambilan keputusan bisnis terkait retensi karyawan.
-
----
-
-### Langkah Selanjutnya
-Tahapan lanjutan yang direkomendasikan adalah:
-
-1. Deploy model ke lingkungan produksi, menggunakan pendekatan Continuous Integration/Continuous Deployment (CI/CD) agar model dapat digunakan secara otomatis dan berkelanjutan.
-2. Monitoring performa model secara berkala untuk mendeteksi penurunan akurasi akibat perubahan pola data (data drift).
-3. Integrasi dengan dashboard HR Analytics agar tim HR dapat memantau risiko attrition secara real-time dan mengambil tindakan preventif lebih cepat.
-4. Eksperimen lanjutan menggunakan model explainable AI seperti LIME atau SHAP summary untuk memperdalam pemahaman terhadap faktor risiko pada tingkat individu.
